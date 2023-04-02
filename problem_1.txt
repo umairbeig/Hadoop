@@ -1,0 +1,83 @@
+==============================
+Class Files
+==============================
+
+The class files are available in `classes/problem_1_pairs.java` and `classes/problem_1_stripes.java`, relative to the root of the extracted zip folder.
+
+==============================
+Instructions
+==============================
+
+Pairs
+==============================
+
+1. Install and set up Hadoop on your system. Make sure all Hadoop daemons are up and running using the `start-all.sh` shell file.
+
+2. Download the dataset on your system.
+
+3. Create a directory called `/input` on HDFS using the following command:
+
+    ------------------------
+    hdfs dfs -mkdir /input
+    ------------------------
+
+4. Copy the dataset into HDFS by putting it inside the above directory using the following command:
+
+    ----------------------------------------
+    hdfs dfs -put <path-to-dataset> /input
+    ----------------------------------------
+
+    For example, if the dataset is present in `Downloads`:
+
+    -----------------------------------------------------------------
+    hdfs dfs -put ~/Downloads/Wikipedia-EN-20120601_ARTICLES /input
+    -----------------------------------------------------------------
+
+5. Execute the following command from the root of the extracted zip folder:
+
+    ----------------------------------------------------------------------------------
+    hdfs jar jars/problem_1_pairs.jar /input/Wikipedia-EN-20120601_ARTICLES /output
+    ----------------------------------------------------------------------------------
+
+    Note: `/output` shouldn't already exist on HDFS. If it does, execute the following command to remove it before executing the above command.
+
+    -------------------------
+    hdfs dfs -rm -r /output
+    -------------------------
+
+Stripes
+==============================
+
+1. Follow steps 1-4 from above.
+
+2. Execute the following command from the root of the extracted zip folder:
+
+    ------------------------------------------------------------------------------------
+    hadoop jar jars/problem_1_stripes.jar /input/Wikipedia-EN-20120601_ARTICLES /output
+    ------------------------------------------------------------------------------------
+
+    Note: `/output` shouldn't already exist on HDFS. If it does, execute the following command to remove it before executing the above command.
+
+    -------------------------
+    hdfs dfs -rm -r /output
+    -------------------------
+
+==============================
+Output
+==============================
+
+The output files can be viewed at `outputs/problem_1_pairs` and `outputs/problem_1_stripes`.
+
+==============================
+Running Times
+==============================
+
+1. Pairs
+
+On a single-node Hadoop cluster, the Pairs approach takes ~8.5 hours.
+
+2. Stripes
+
+On a single-node Hadoop cluster, the Stripes approach takes ~8 hours.
+
+The Stripes approach is faster than the Pairs approach since it generates fewer intermediate keys and thus, has less work to do in terms of transferring data from the mappers to the reducers.

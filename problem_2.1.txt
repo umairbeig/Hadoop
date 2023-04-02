@@ -1,0 +1,82 @@
+==============================
+Class File
+==============================
+
+The class file is available in `classes/problem_2.1.java`, relative to the root of the extracted zip folder.
+
+==============================
+Instructions
+==============================
+
+1. Install and set up Hadoop on your system. Make sure all Hadoop daemons are up and running using the `start-all.sh` shell file.
+
+2. Download the dataset on your system.
+
+3. Create a directory called `/input` on HDFS using the following command:
+
+    ------------------------
+    hdfs dfs -mkdir /input
+    ------------------------
+
+4. Copy the dataset into HDFS by putting it inside the above directory using the following command:
+
+    ----------------------------------------
+    hdfs dfs -put <path-to-dataset> /input
+    ----------------------------------------
+
+    For example, if the dataset is present in `~/Downloads`:
+
+    -----------------------------------------------------------------
+    hdfs dfs -put ~/Downloads/Wikipedia-EN-20120601_ARTICLES /input
+    -----------------------------------------------------------------
+
+5. Execute the following command from the root of the extracted zip folder:
+
+    -------------------------------------------------------------------------------
+    hdfs jar jars/problem_2.1.jar /input/Wikipedia-EN-20120601_ARTICLES /output
+    -------------------------------------------------------------------------------
+
+    Note: `/output` shouldn't already exist on HDFS. If it does, execute the following command to remove it before executing the above command.
+
+    -------------------------
+    hdfs dfs -rm -r /output
+    -------------------------
+
+5. To convert the resultant  output file to a TSV file, use the `sed` utility as follows:
+
+    -------------------------------------------------------------------------------------------------------------
+    echo -e "TERM\tDF" | hdfs dfs -cat - /output/part-r-00000 | sed 's/\t/\t/g' | hdfs dfs -put /output/df.tsv
+    -------------------------------------------------------------------------------------------------------------
+
+    where,
+
+    In `echo -e "TERM\tDF"`
+        -e = Enables interpretation of backslash escape sequences, which is required for `\t`.
+        "TERM\tDF" = Appends the header.
+
+    In sed 's/\t/\t/g'
+        's/\t/\t/g' = Replaces all tab characters in the input file with a tab character. This is to ensure that even if there are multiple tab characters between each column, they are replaced by a single tab character so that the resultant file is a valid TSV.
+
+
+
+6. To obtain the Top 100 terms, execute the following command:
+
+    -----------------------------------------------------------------------------------------------------------
+    hdfs dfs -cat /output/part-r-00000 | sort -k 2 -n -r | head -n 100 | hdfs dfs -put - /output/df-top100.tsv
+    -----------------------------------------------------------------------------------------------------------
+
+    where,
+
+    In `sort -k 2 -n -r`
+        -k 2 = Sort according to the second column (1-based)
+        n = Expect a numeric data type in the second column
+        r = Sort in reverse order (descending order)
+
+    In `head -n 100`
+        -n 100 = Take the first 100 records
+
+==============================
+Output Files
+==============================
+
+The output files can be viewed at `outputs/problem_2.1.tsv` (full output) and `outputs/problem_2.1_top100.tsv` (top 100 terms).

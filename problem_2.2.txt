@@ -1,0 +1,64 @@
+==============================
+Class File
+==============================
+
+The class file is available in `classes/problem_2.2.java`, relative to the root of the extracted zip folder.
+
+==============================
+Instructions
+==============================
+
+1. Install and set up Hadoop on your system. Make sure all Hadoop daemons are up and running using the `start-all.sh` shell file.
+
+2. Download the dataset on your system.
+
+3. Create a directory called `/input` on HDFS using the following command:
+
+    ------------------------
+    hdfs dfs -mkdir /input
+    ------------------------
+
+4. Copy the dataset into HDFS by putting it inside the above directory using the following command:
+
+    ----------------------------------------
+    hdfs dfs -put <path-to-dataset> /input
+    ----------------------------------------
+
+    For example, if the dataset is present in `~/Downloads`:
+
+    -----------------------------------------------------------------
+    hdfs dfs -put ~/Downloads/Wikipedia-EN-20120601_ARTICLES /input
+    -----------------------------------------------------------------
+
+5. Execute the following command from the root of the extracted zip folder:
+
+    -------------------------------------------------------------------------------
+    hdfs jar jars/problem_2.2.jar /input/Wikipedia-EN-20120601_ARTICLES /output
+    -------------------------------------------------------------------------------
+
+    Note: `/output` shouldn't already exist on HDFS. If it does, execute the following command to remove it before executing the above command.
+
+    -------------------------
+    hdfs dfs -rm -r /output
+    -------------------------
+
+5. To convert the resultant output file to a TSV file, use the `sed` utility as follows:
+
+    ------------------------------------------------------------------------------------------------------------------------
+    echo -e "ID\tTERM\tSCORE" | hdfs dfs -cat - /output/part-r-00000 | sed 's/\t/\t/g' | hdfs dfs -put /output/tf-idf.tsv
+    ------------------------------------------------------------------------------------------------------------------------
+
+    where,
+
+    In `echo -e "ID\tTERM\tSCORE"`
+        -e = Enables interpretation of backslash escape sequences, which is required for `\t`.
+        "ID\tTERM\tSCORE" = Appends the header.
+
+    In sed 's/\t/\t/g'
+        's/\t/\t/g' = Replaces all tab characters in the input file with a tab character. This is to ensure that even if there are multiple tab characters between each column, they are replaced by a single tab character so that the resultant file is a valid TSV.
+
+==============================
+Output Files
+==============================
+
+The output files can be viewed at `outputs/problem_2.2.tsv`.
